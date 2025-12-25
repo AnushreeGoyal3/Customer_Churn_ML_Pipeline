@@ -1,64 +1,148 @@
-\# Customer Churn Prediction — End-to-End ML Pipeline
+Project: Customer Churn Prediction — End-to-End ML Pipeline
+
+Problem Statement
+
+Customer churn directly impacts revenue and lifetime value. The objective of this project was to predict whether a customer is likely to churn so that retention actions (discounts, outreach, contract upgrades) can be triggered proactively.
+
+The problem is binary classification with class imbalance, where churners are the minority class.
+
+Dataset
+
+Source: Kaggle Telco Customer Churn Dataset
+
+Size: 7,000 customers
+
+Target Variable: Churn (0 = No, 1 = Yes)
+
+Feature Types:
+
+Demographic (gender, senior citizen)
+
+Service usage (internet service, streaming)
+
+Contract & billing (tenure, monthly charges, contract type)
+
+ML Pipeline Design (End-to-End)
+
+The pipeline was structured to mirror production ML systems:
+
+Data ingestion & validation
+
+Feature engineering
+
+Categorical encoding
+
+Numerical scaling
+
+Train–test split with stratification
+
+Model training
+
+Evaluation using business-aware metrics
+
+Model interpretability using SHAP
+
+Baseline Model — Logistic Regression
+Why Logistic Regression?
+
+Strong baseline for binary classification
+
+Interpretable coefficients
+
+Fast to train and easy to deploy
+
+Model Performance
+ROC-AUC = 0.833
+
+Indicates the model ranks churners above non-churners 83% of the time
+
+Anything above 0.80 is considered a production-viable baseline in churn prediction
+
+Confusion Matrix
+[[724 309]   → Non-churners
+ [ 76 298]]  → Churners
+
+Metric	Value
+True Positives (Caught churners)	298
+False Negatives (Missed churners)	76
+Recall (Churn = 1)	80%
+Precision (Churn = 1)	49%
+
+
+Business Interpretation 
+
+The model prioritizes high recall for churners
+
+It deliberately accepts more false positives
+
+Why this is desirable:
+
+Missing a churner = lost revenue
+
+False positive = marketing email (low cost)
 
 
 
-\## Problem
+I optimized for recall on the churn class since the business cost of missing a churner is significantly higher than a false positive. ROC-AUC was used as the primary evaluation metric due to class imbalance.
 
-Predict customer churn to enable proactive retention strategies.
+Model Upgrade — Random Forest
+Motivation
 
+Logistic Regression is linear and may miss complex relationships.
 
+Why Random Forest? 
 
-\## Dataset
+Random Forest captures nonlinear feature interactions and threshold effects that linear models cannot, while remaining robust to noise and still interpretable via feature importance.
 
-IBM Telco Customer Churn dataset (~7k customers).
+Benefits:
 
+Handles nonlinearities
 
+Less sensitive to outliers
 
-\## Pipeline
+Built-in feature importance
 
-\- Data ingestion \& validation
+Model Explainability — SHAP
+Why Explainability?
 
-\- Feature engineering
+In real-world ML systems, stakeholders must trust predictions.
 
-\- Model training (Logistic Regression)
+SHAP was used to:
 
-\- Evaluation (ROC-AUC, precision, recall)
+Explain global feature importance
 
-\- Explainability using SHAP
+Understand directional impact of features
 
+Validate that the model aligns with domain knowledge
 
+SHAP Insights
 
-\## Results
+Contract type — month-to-month contracts increase churn risk
 
-\- ROC-AUC: \*\*0.83\*\*
+Tenure — longer tenure reduces churn probability
 
-\- Recall (Churn): \*\*80%\*\*
+Monthly charges — higher charges increase churn likelihood
 
-\- Key drivers: Contract type, tenure, monthly charges
+I used SHAP values to explain both global and individual predictions. Contract type, tenure, and monthly charges emerged as the strongest churn drivers, which aligned well with business intuition and increased trust in the model.
 
+ Final Outcomes
 
+ Production-ready ML pipeline
 
-\## Tech Stack
+ Strong baseline ROC-AUC (0.83)
 
-Python, pandas, scikit-learn, SHAP
+ Business-aligned evaluation strategy
 
+ Interpretable predictions using SHAP
 
+ Extensible to advanced models (XGBoost, LightGBM)
 
-\## How to Run
+ Tech Stack
 
-```bash
+Languages: Python
 
-pip install -r requirements.txt
+Libraries: pandas, scikit-learn, SHAP
 
-python src/data/make\_dataset.py
+Tools: Git, GitHub, PowerShell
 
-python src/features/build\_features.py
-
-python src/models/train.py
-
-python src/models/evaluate.py
-
-python src/models/shap\_explainability.py
-
-
-
+ML Concepts: Classification, Imbalanced Learning, Explainability, Model Evaluation
